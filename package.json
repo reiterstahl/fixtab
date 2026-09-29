@@ -1,6 +1,6 @@
 {
   "name": "fixtab",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Extensión de Chrome: guarda un grupo de pestañas fijadas y lo restaura con un botón o al iniciar.",
@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "verify": "pnpm format:check && pnpm check && pnpm test && pnpm test:e2e",
-    "zip": "cd extension && zip -qr ../fixtab.zip . && echo fixtab.zip"
+    "zip": "node scripts/pack.mjs",
+    "assets": "node scripts/store-assets.mjs && python3 scripts/flatten_png.py store"
   },
   "packageManager": "pnpm@11.16.0",
   "devDependencies": {

@@ -34,8 +34,12 @@ def draw() -> Image.Image:
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     big = draw()
-    for size in (16, 32, 48, 128):
+    for size in (16, 32, 48):
         big.resize((size, size), Image.Resampling.LANCZOS).save(OUT / f"icon{size}.png")
+    # 128: la Chrome Web Store pide el dibujo en 96×96 con 16 px de margen transparente.
+    icon128 = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
+    icon128.alpha_composite(big.resize((96, 96), Image.Resampling.LANCZOS), (16, 16))
+    icon128.save(OUT / "icon128.png")
     print("íconos en", OUT)
 
 
