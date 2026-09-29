@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "FixTab",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Guarda un grupo de pestañas fijadas y lo restaura con un botón o al iniciar Chrome.",
   "minimum_chrome_version": "116",
   "permissions": ["tabs", "storage", "favicon"],

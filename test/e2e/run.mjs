@@ -253,6 +253,41 @@ try {
     assert.deepEqual(await pinnedUrls(sw), [U("a"), U("b")]);
   });
 
+  await step("Chrome sigue vivo: cerrar todas las ventanas y abrir otra las carga", async () => {
+    await resetForStartup(true);
+    // Sin salir de Chrome (macOS, o Windows en segundo plano): no llega
+    // onStartup; la primera ventana nueva tiene que bastar.
+    const windowId = await inSW(sw, async () => {
+      const wins = await chrome.windows.getAll({ windowTypes: ["normal"] });
+      for (const w of wins) await chrome.windows.remove(/** @type {number} */ (w.id));
+      await new Promise((r) => setTimeout(r, 500));
+      return (await chrome.windows.create({ url: "about:blank" })).id;
+    });
+    const pinnedIn = (/** @type {number} */ id) =>
+      inSW(
+        sw,
+        async (wid) =>
+          (await chrome.tabs.query({ windowId: wid, pinned: true })).map(
+            (t) => t.url || t.pendingUrl,
+          ),
+        id,
+      );
+    await waitFor(
+      async () => (await pinnedIn(windowId)).length === 2,
+      "fijadas en la ventana nueva",
+    );
+    assert.deepEqual(await pinnedIn(windowId), [U("a"), U("b")]);
+
+    // Con una ventana ya abierta, abrir otra no es arranque: queda sin fijadas.
+    const second = await inSW(
+      sw,
+      async () => (await chrome.windows.create({ url: "about:blank" })).id,
+    );
+    await new Promise((r) => setTimeout(r, 4000)); // más que la espera de asentamiento
+    assert.deepEqual(await pinnedIn(second), []);
+    assert.deepEqual(await pinnedIn(windowId), [U("a"), U("b")], "la primera sigue igual");
+  });
+
   await step("el switch se apaga desde el popup", async () => {
     const popup = await openPopup(context, extId);
     await popup.locator(".switch-row").click(); // clic en la fila, como una persona

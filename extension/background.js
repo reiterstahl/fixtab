@@ -139,21 +139,69 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 // --- Arranque -------------------------------------------------------------
 
 chrome.runtime.onStartup.addListener(() => {
-  void startupRestore().catch((err) => console.error("FixTab: arranque", err));
+  void autoRestore();
 });
+
+// Cerrar todas las ventanas no siempre cierra Chrome: en macOS sigue vivo, y en
+// Windows también si está activo «Seguir ejecutando aplicaciones en segundo
+// plano». Al abrir una ventana de nuevo no llega onStartup, pero para la
+// persona eso es abrir Chrome: la primera ventana normal cuando no había
+// ninguna cuenta como arranque.
+chrome.windows.onCreated.addListener(
+  (win) => {
+    if (win.type !== "normal" || win.incognito || win.id === undefined) return;
+    const windowId = win.id;
+    void chrome.windows.getAll({ windowTypes: ["normal"] }).then((wins) => {
+      if (wins.filter((w) => !w.incognito).length === 1) void autoRestore(windowId);
+    });
+  },
+  { windowTypes: ["normal"] },
+);
+
+/** @type {Promise<void> | null} */
+let autoRestoreInFlight = null;
+
+/**
+ * Restauración automática. Al arrancar de verdad llegan onStartup y la primera
+ * ventana casi a la vez: se juntan en una sola ejecución.
+ * @param {number} [windowId] ventana destino; si no, la última enfocada
+ */
+function autoRestore(windowId) {
+  autoRestoreInFlight ??= startupRestore(windowId)
+    .catch((err) => console.error("FixTab: arranque", err))
+    .finally(() => {
+      autoRestoreInFlight = null;
+    });
+  return autoRestoreInFlight;
+}
 
 // Para el e2e: una extensión cargada con --load-extension se reinstala en cada
 // arranque y nunca recibe onStartup, así que la prueba llama a esto directamente.
 // Solo es accesible desde el propio service worker.
-Object.assign(globalThis, { fixtabStartupForTests: startupRestore });
+Object.assign(globalThis, { fixtabStartupForTests: autoRestore });
 
-async function startupRestore() {
+/** @param {number} [windowId] */
+async function startupRestore(windowId) {
   const { autoLoad, group } = await getSettings();
   if (!autoLoad || group.length === 0) return;
   await waitForNormalWindow();
   await waitForTabsToSettle();
-  const win = await chrome.windows.getLastFocused({ windowTypes: ["normal"] });
-  if (win.id !== undefined) await restore(win.id);
+  // Si justo hay una restauración manual en marcha, ella ya se encarga.
+  if (running) return;
+  const target = await targetWindow(windowId);
+  if (target !== undefined) await restore(target);
+}
+
+/**
+ * La ventana pedida si sigue abierta; si no, la última enfocada.
+ * @param {number} [windowId]
+ */
+async function targetWindow(windowId) {
+  if (windowId !== undefined) {
+    const win = await chrome.windows.get(windowId).catch(() => null);
+    if (win) return windowId;
+  }
+  return (await chrome.windows.getLastFocused({ windowTypes: ["normal"] })).id;
 }
 
 async function waitForNormalWindow() {

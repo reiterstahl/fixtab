@@ -12,8 +12,10 @@ con un botón o, si quieres, cada vez que abres Chrome.
   - Si está abierta pero suelta, la fija en vez de abrir otra.
   - Si falta, la abre (en segundo plano).
   - Las fijadas que no son del grupo quedan después, intactas.
-- **Cargar al iniciar Chrome** (encendido por defecto): al arrancar Chrome restaura el grupo en
-  la primera ventana. Apagado, solo se restaura con el botón.
+- **Cargar al iniciar Chrome** (encendido por defecto): restaura el grupo en la primera ventana
+  al abrir Chrome. Apagado, solo se restaura con el botón. «Abrir Chrome» incluye abrir una
+  ventana cuando no había ninguna aunque Chrome siguiera vivo (macOS, o Windows con _Seguir
+  ejecutando aplicaciones en segundo plano_). Abrir una segunda ventana no restaura nada.
 - **Atajo**: `Alt+Shift+P` restaura sin abrir el popup (se cambia en
   `chrome://extensions/shortcuts`).
 
@@ -41,9 +43,6 @@ Para actualizar: `git pull` y pulsar ↻ en la tarjeta de FixTab en `chrome://ex
 
 ## Límites conocidos
 
-- «Al iniciar» significa cuando arranca el **perfil** de Chrome. Si Chrome sigue corriendo en
-  segundo plano (Windows: _Seguir ejecutando aplicaciones en segundo plano_), cerrar y abrir una
-  ventana no es un arranque y no restaura. En ese caso: botón o atajo.
 - Si una pestaña guardada lleva a un login, la `finalUrl` anotada puede ser la del login. Se
   corrige sola la próxima vez que se restaure con la sesión iniciada.
 - Las URLs `file://` requieren activar «Permitir acceso a URLs de archivo» en la tarjeta de la
