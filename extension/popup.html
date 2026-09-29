@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>FixTab</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <img src="icons/icon32.png" alt="" width="20" height="20" />
+      <h1>FixTab</h1>
+    </header>
+
+    <section class="actions">
+      <button id="restore" class="primary" type="button">Restaurar fijadas</button>
+      <p id="restore-hint" class="hint" hidden></p>
+      <p id="status" class="status" role="status" hidden></p>
+    </section>
+
+    <label class="switch-row">
+      <span>
+        <span class="switch-title">Cargar al iniciar Chrome</span>
+        <span id="autoload-hint" class="hint"></span>
+      </span>
+      <input id="autoload" type="checkbox" role="switch" />
+      <span class="switch" aria-hidden="true"></span>
+    </label>
+
+    <section>
+      <h2 id="group-title">Grupo guardado</h2>
+      <ol id="group" class="group"></ol>
+      <p id="empty" class="hint" hidden>
+        Todavía no hay grupo. Fija las pestañas que quieras y pulsa «Guardar».
+      </p>
+    </section>
+
+    <footer>
+      <button id="save" type="button">Guardar las fijadas de esta ventana</button>
+      <p id="save-hint" class="hint"></p>
+      <p id="shortcut" class="hint"></p>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
