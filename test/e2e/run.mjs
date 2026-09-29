@@ -36,11 +36,13 @@ const U = (/** @type {string} */ p) => `${base}/${p}`;
 
 const profile = mkdtempSync(join(tmpdir(), "fixtab-e2e-"));
 
-async function launch() {
-  const context = await chromium.launchPersistentContext(profile, {
+/** @param {string} lang idioma de la interfaz del navegador (elige el de la extensión) */
+async function launch(lang = "es", dir = profile) {
+  const context = await chromium.launchPersistentContext(dir, {
     channel: "chromium",
     headless: true,
-    args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`],
+    locale: lang,
+    args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`, `--lang=${lang}`],
   });
   const sw = context.serviceWorkers()[0] ?? (await context.waitForEvent("serviceworker"));
   const extId = new URL(sw.url()).host;
@@ -307,6 +309,28 @@ try {
     await popup.locator("#status").getByText("2 abiertas.").waitFor();
     assert.deepEqual(await pinnedUrls(sw), [U("a"), U("b")]);
     await popup.close();
+  });
+
+  await step("en inglés: el navegador en inglés muestra la extensión en inglés", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "fixtab-e2e-en-"));
+    const en = await launch("en", dir);
+    try {
+      await inSW(en.sw, (g) => chrome.storage.sync.set({ group: g }), [
+        { url: U("a") },
+        { url: U("b") },
+      ]);
+      const popup = await openPopup(en.context, en.extId);
+      assert.equal(await popup.locator("#restore").textContent(), "Restore pinned tabs (2)");
+      assert.equal(
+        await popup.locator(".switch-title").textContent(),
+        "Load when the browser starts",
+      );
+      await popup.locator("#restore").click();
+      await popup.locator("#status").getByText("2 opened.").waitFor();
+    } finally {
+      await en.context.close();
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   console.log(`\n${steps.length} escenarios OK`);

@@ -1,6 +1,7 @@
 // Service worker de FixTab: restaura el grupo de pestañas fijadas al arrancar
 // Chrome (si el switch está encendido), desde el popup o con el atajo.
 
+import { t } from "./lib/i18n.js";
 import { describeResult, planRestore, urlKey } from "./lib/plan.js";
 import { getSettings, setGroup } from "./lib/store.js";
 
@@ -27,14 +28,14 @@ const sleep = (/** @type {number} */ ms) => new Promise((r) => setTimeout(r, ms)
  * @returns {Promise<RestoreResult>}
  */
 async function restore(windowId) {
-  if (running) throw new Error("Ya hay una restauración en curso.");
+  if (running) throw new Error(t("restoreBusy"));
   running = doRestore(windowId);
   try {
     const result = await running;
-    await showBadge(result.failed ? `${result.failed} pestaña(s) no se pudieron abrir.` : null);
+    await showBadge(result.failed ? t("badgeFailed", [result.failed]) : null);
     return result;
   } catch (err) {
-    await showBadge(`Error al restaurar: ${errorText(err)}`);
+    await showBadge(t("badgeError", [errorText(err)]));
     throw err;
   } finally {
     running = null;
@@ -72,7 +73,7 @@ async function doRestore(windowId) {
       result.failed++;
     }
   }
-  console.info("FixTab:", describeResult(result));
+  console.info("FixTab:", describeResult(result, t));
   return result;
 }
 
@@ -241,7 +242,7 @@ async function waitForTabsToSettle() {
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg?.type !== "restore") return false;
   restore(msg.windowId).then(
-    (result) => sendResponse({ ok: true, result, text: describeResult(result) }),
+    (result) => sendResponse({ ok: true, result, text: describeResult(result, t) }),
     (err) => sendResponse({ ok: false, error: errorText(err) }),
   );
   return true; // respuesta asíncrona

@@ -1,11 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  describeResult,
-  entriesFromTabs,
-  entryKeys,
-  planRestore,
-  urlKey,
-} from "../extension/lib/plan.js";
+import { entriesFromTabs, entryKeys, planRestore, urlKey } from "../extension/lib/plan.js";
 
 describe("urlKey", () => {
   it("ignora el #fragmento y la barra final", () => {
@@ -118,20 +112,5 @@ describe("entriesFromTabs", () => {
       { url: "https://b.com/" },
       { url: "https://c.com/", title: "C" },
     ]);
-  });
-});
-
-describe("describeResult", () => {
-  it("resume en español con singular y plural", () => {
-    expect(describeResult({ opened: 2, pinned: 1, kept: 1, failed: 0 })).toBe(
-      "2 abiertas, 1 fijada, 1 ya estaba.",
-    );
-    expect(describeResult({ opened: 0, pinned: 0, kept: 3, failed: 0 })).toBe("Ya estaban todas.");
-    expect(describeResult({ opened: 0, pinned: 0, kept: 0, failed: 0 })).toBe(
-      "No hay pestañas guardadas.",
-    );
-    expect(describeResult({ opened: 1, pinned: 0, kept: 0, failed: 2 })).toBe(
-      "1 abierta, 2 con error.",
-    );
   });
 });

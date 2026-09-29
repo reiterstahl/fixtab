@@ -1,3 +1,4 @@
+import { plural, t } from "./lib/i18n.js";
 import { entriesFromTabs } from "./lib/plan.js";
 import { getSettings, setAutoLoad, setGroup } from "./lib/store.js";
 
@@ -30,7 +31,16 @@ const state = {
   confirmingSave: false,
 };
 
+/** Textos fijos del HTML: los elementos con atributo data-i18n llevan la clave. */
+function localizeStatic() {
+  document.documentElement.lang = chrome.i18n.getUILanguage();
+  for (const el of document.querySelectorAll("[data-i18n]")) {
+    el.textContent = t(/** @type {HTMLElement} */ (el).dataset.i18n ?? "");
+  }
+}
+
 async function init() {
+  localizeStatic();
   const win = await chrome.windows.getCurrent();
   state.windowId = win.id;
   await Promise.all([loadSettings(), loadPinned(), showShortcut()]);
@@ -50,9 +60,7 @@ async function loadPinned() {
 async function showShortcut() {
   const commands = await chrome.commands.getAll();
   const shortcut = commands.find((c) => c.name === "restore-pinned")?.shortcut;
-  els.shortcut.textContent = shortcut
-    ? `Atajo: ${shortcut}`
-    : "Sin atajo de teclado. Se asigna en chrome://extensions/shortcuts.";
+  els.shortcut.textContent = shortcut ? t("shortcut", [shortcut]) : t("noShortcut");
 }
 
 function render() {
@@ -60,31 +68,29 @@ function render() {
   const m = state.pinned.length;
 
   els.restore.disabled = state.busy || n === 0;
-  els.restore.textContent = n ? `Restaurar fijadas (${n})` : "Restaurar fijadas";
+  els.restore.textContent = n ? t("restoreButtonCount", [n]) : t("restoreButton");
   els.restoreHint.hidden = n > 0;
-  els.restoreHint.textContent = "No hay grupo guardado todavía.";
+  els.restoreHint.textContent = t("restoreHintEmpty");
 
   els.autoload.checked = state.autoLoad;
   els.autoload.disabled = state.busy;
-  els.autoloadHint.textContent = state.autoLoad
-    ? "Se cargan solas al abrir Chrome."
-    : "Solo se cargan cuando pulsas «Restaurar».";
+  els.autoloadHint.textContent = t(state.autoLoad ? "autoloadOn" : "autoloadOff");
 
-  els.groupTitle.textContent = n ? `Grupo guardado (${n})` : "Grupo guardado";
+  els.groupTitle.textContent = n ? t("groupTitleCount", [n]) : t("groupTitle");
   els.empty.hidden = n > 0;
   els.group.replaceChildren(...state.group.map(renderEntry));
 
   els.save.disabled = state.busy || m === 0;
   els.save.classList.toggle("danger", state.confirmingSave);
   if (m === 0) {
-    els.save.textContent = "Guardar las fijadas de esta ventana";
-    els.saveHint.textContent = "Esta ventana no tiene pestañas fijadas.";
+    els.save.textContent = t("saveButton");
+    els.saveHint.textContent = t("saveHintNoPinned");
   } else if (state.confirmingSave) {
-    els.save.textContent = "Confirmar: reemplazar el grupo";
-    els.saveHint.textContent = `Pulsa de nuevo para cambiar las ${n} guardadas por las ${m} fijadas de esta ventana.`;
+    els.save.textContent = t("saveConfirm");
+    els.saveHint.textContent = t("saveConfirmHint", [n, m]);
   } else {
-    els.save.textContent = `Guardar las ${m} fijadas de esta ventana`;
-    els.saveHint.textContent = n ? "Reemplaza el grupo guardado." : "";
+    els.save.textContent = plural(t, "saveButton", m);
+    els.saveHint.textContent = n ? t("saveHintReplaces") : "";
   }
 }
 
@@ -116,8 +122,8 @@ function renderEntry(entry, index) {
   remove.type = "button";
   remove.className = "remove";
   remove.textContent = "×";
-  remove.title = "Quitar del grupo";
-  remove.setAttribute("aria-label", `Quitar ${title.textContent} del grupo`);
+  remove.title = t("removeTitle");
+  remove.setAttribute("aria-label", t("removeLabel", [title.textContent]));
   remove.disabled = state.busy;
   remove.addEventListener("click", () =>
     run(async () => {
@@ -179,7 +185,7 @@ async function run(action) {
 els.restore.addEventListener("click", () =>
   run(async () => {
     const res = await chrome.runtime.sendMessage({ type: "restore", windowId: state.windowId });
-    if (!res?.ok) throw new Error(res?.error ?? "No hubo respuesta del fondo de la extensión.");
+    if (!res?.ok) throw new Error(res?.error ?? t("noResponse"));
     showStatus(res.text, res.result.failed ? "error" : "ok");
   }),
 );
@@ -203,9 +209,7 @@ els.save.addEventListener("click", () => {
     await loadPinned();
     const entries = entriesFromTabs(state.pinned);
     await setGroup(entries);
-    showStatus(
-      entries.length === 1 ? "Guardada 1 pestaña." : `Guardadas ${entries.length} pestañas.`,
-    );
+    showStatus(entries.length === 1 ? t("savedOne") : t("savedCount", [entries.length]));
   });
 });
 

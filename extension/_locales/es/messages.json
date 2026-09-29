@@ -1,0 +1,222 @@
+{
+  "extName": {
+    "message": "FixTab",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Guarda un grupo de pestañas fijadas y lo restaura con un clic o al abrir el navegador.",
+    "description": "Store/manifest description, max 132 chars"
+  },
+  "cmdRestore": {
+    "message": "Restaurar las pestañas fijadas",
+    "description": "Keyboard shortcut description"
+  },
+  "restoreButton": {
+    "message": "Restaurar fijadas",
+    "description": "Main button, no group saved"
+  },
+  "restoreButtonCount": {
+    "message": "Restaurar fijadas ($COUNT$)",
+    "description": "Main button with group size",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "restoreHintEmpty": {
+    "message": "No hay grupo guardado todavía.",
+    "description": "Why Restore is disabled"
+  },
+  "autoloadTitle": {
+    "message": "Cargar al abrir el navegador",
+    "description": "Switch label"
+  },
+  "autoloadOn": {
+    "message": "Se cargan solas al abrir el navegador.",
+    "description": "Switch on"
+  },
+  "autoloadOff": {
+    "message": "Solo se cargan cuando pulsas «Restaurar».",
+    "description": "Switch off"
+  },
+  "groupTitle": {
+    "message": "Grupo guardado",
+    "description": "Section title"
+  },
+  "groupTitleCount": {
+    "message": "Grupo guardado ($COUNT$)",
+    "description": "Section title with size",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "groupEmpty": {
+    "message": "Todavía no hay grupo. Fija las pestañas que quieras y pulsa «Guardar».",
+    "description": "Empty state"
+  },
+  "saveButton": {
+    "message": "Guardar las fijadas de esta ventana",
+    "description": "Save button, no count"
+  },
+  "saveButtonOne": {
+    "message": "Guardar la fijada de esta ventana",
+    "description": "Save button, 1 pinned tab"
+  },
+  "saveButtonCount": {
+    "message": "Guardar las $COUNT$ fijadas de esta ventana",
+    "description": "Save button, n pinned",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "saveHintNoPinned": {
+    "message": "Esta ventana no tiene pestañas fijadas.",
+    "description": "Why Save is disabled"
+  },
+  "saveHintReplaces": {
+    "message": "Reemplaza el grupo guardado.",
+    "description": "Save hint"
+  },
+  "saveConfirm": {
+    "message": "Confirmar: reemplazar el grupo",
+    "description": "Second step of Save"
+  },
+  "saveConfirmHint": {
+    "message": "Pulsa de nuevo para cambiar las $SAVED$ guardadas por las $PINNED$ fijadas de esta ventana.",
+    "description": "Confirm hint",
+    "placeholders": {
+      "saved": {
+        "content": "$1"
+      },
+      "pinned": {
+        "content": "$2"
+      }
+    }
+  },
+  "savedOne": {
+    "message": "Guardada 1 pestaña.",
+    "description": "After saving 1"
+  },
+  "savedCount": {
+    "message": "Guardadas $COUNT$ pestañas.",
+    "description": "After saving n",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "shortcut": {
+    "message": "Atajo: $KEYS$",
+    "description": "Assigned keyboard shortcut",
+    "placeholders": {
+      "keys": {
+        "content": "$1"
+      }
+    }
+  },
+  "noShortcut": {
+    "message": "Sin atajo de teclado. Se asigna en chrome://extensions/shortcuts.",
+    "description": "No shortcut assigned"
+  },
+  "removeTitle": {
+    "message": "Quitar del grupo",
+    "description": "Tooltip of ×"
+  },
+  "removeLabel": {
+    "message": "Quitar $TITLE$ del grupo",
+    "description": "Accessible label of ×",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "noResponse": {
+    "message": "No hubo respuesta del fondo de la extensión.",
+    "description": "Popup error"
+  },
+  "restoreBusy": {
+    "message": "Ya hay una restauración en curso.",
+    "description": "Error"
+  },
+  "badgeFailed": {
+    "message": "$COUNT$ pestaña(s) no se pudieron abrir.",
+    "description": "Icon tooltip",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeError": {
+    "message": "Error al restaurar: $ERROR$",
+    "description": "Icon tooltip",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "resultNone": {
+    "message": "No hay pestañas guardadas.",
+    "description": "Restore result"
+  },
+  "resultAllThere": {
+    "message": "Ya estaban todas.",
+    "description": "Restore result"
+  },
+  "resultOpenedOne": {
+    "message": "1 abierta",
+    "description": "Restore result part"
+  },
+  "resultOpenedCount": {
+    "message": "$COUNT$ abiertas",
+    "description": "Restore result part",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "resultPinnedOne": {
+    "message": "1 fijada",
+    "description": "Restore result part"
+  },
+  "resultPinnedCount": {
+    "message": "$COUNT$ fijadas",
+    "description": "Restore result part",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "resultKeptOne": {
+    "message": "1 ya estaba",
+    "description": "Restore result part"
+  },
+  "resultKeptCount": {
+    "message": "$COUNT$ ya estaban",
+    "description": "Restore result part",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "resultFailedCount": {
+    "message": "$COUNT$ con error",
+    "description": "Restore result part",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  }
+}

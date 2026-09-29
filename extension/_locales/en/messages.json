@@ -1,0 +1,222 @@
+{
+  "extName": {
+    "message": "FixTab",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Save a set of pinned tabs and bring them back with one click or when your browser starts.",
+    "description": "Store/manifest description, max 132 chars"
+  },
+  "cmdRestore": {
+    "message": "Restore pinned tabs",
+    "description": "Keyboard shortcut description"
+  },
+  "restoreButton": {
+    "message": "Restore pinned tabs",
+    "description": "Main button, no group saved"
+  },
+  "restoreButtonCount": {
+    "message": "Restore pinned tabs ($COUNT$)",
+    "description": "Main button with group size",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "restoreHintEmpty": {
+    "message": "No saved group yet.",
+    "description": "Why Restore is disabled"
+  },
+  "autoloadTitle": {
+    "message": "Load when the browser starts",
+    "description": "Switch label"
+  },
+  "autoloadOn": {
+    "message": "They open on their own when the browser starts.",
+    "description": "Switch on"
+  },
+  "autoloadOff": {
+    "message": "They only open when you press “Restore”.",
+    "description": "Switch off"
+  },
+  "groupTitle": {
+    "message": "Saved group",
+    "description": "Section title"
+  },
+  "groupTitleCount": {
+    "message": "Saved group ($COUNT$)",
+    "description": "Section title with size",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "groupEmpty": {
+    "message": "No group yet. Pin the tabs you want and press “Save”.",
+    "description": "Empty state"
+  },
+  "saveButton": {
+    "message": "Save this window's pinned tabs",
+    "description": "Save button, no count"
+  },
+  "saveButtonOne": {
+    "message": "Save this window's pinned tab",
+    "description": "Save button, 1 pinned tab"
+  },
+  "saveButtonCount": {
+    "message": "Save this window's $COUNT$ pinned tabs",
+    "description": "Save button, n pinned",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "saveHintNoPinned": {
+    "message": "This window has no pinned tabs.",
+    "description": "Why Save is disabled"
+  },
+  "saveHintReplaces": {
+    "message": "Replaces the saved group.",
+    "description": "Save hint"
+  },
+  "saveConfirm": {
+    "message": "Confirm: replace the group",
+    "description": "Second step of Save"
+  },
+  "saveConfirmHint": {
+    "message": "Press again to replace the $SAVED$ saved tabs with the $PINNED$ pinned in this window.",
+    "description": "Confirm hint",
+    "placeholders": {
+      "saved": {
+        "content": "$1"
+      },
+      "pinned": {
+        "content": "$2"
+      }
+    }
+  },
+  "savedOne": {
+    "message": "Saved 1 tab.",
+    "description": "After saving 1"
+  },
+  "savedCount": {
+    "message": "Saved $COUNT$ tabs.",
+    "description": "After saving n",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "shortcut": {
+    "message": "Shortcut: $KEYS$",
+    "description": "Assigned keyboard shortcut",
+    "placeholders": {
+      "keys": {
+        "content": "$1"
+      }
+    }
+  },
+  "noShortcut": {
+    "message": "No keyboard shortcut. Set one at chrome://extensions/shortcuts.",
+    "description": "No shortcut assigned"
+  },
+  "removeTitle": {
+    "message": "Remove from group",
+    "description": "Tooltip of ×"
+  },
+  "removeLabel": {
+    "message": "Remove $TITLE$ from the group",
+    "description": "Accessible label of ×",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "noResponse": {
+    "message": "The extension's background didn't respond.",
+    "description": "Popup error"
+  },
+  "restoreBusy": {
+    "message": "A restore is already running.",
+    "description": "Error"
+  },
+  "badgeFailed": {
+    "message": "$COUNT$ tab(s) couldn't be opened.",
+    "description": "Icon tooltip",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeError": {
+    "message": "Restore failed: $ERROR$",
+    "description": "Icon tooltip",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "resultNone": {
+    "message": "No saved tabs.",
+    "description": "Restore result"
+  },
+  "resultAllThere": {
+    "message": "All already open.",
+    "description": "Restore result"
+  },
+  "resultOpenedOne": {
+    "message": "1 opened",
+    "description": "Restore result part"
+  },
+  "resultOpenedCount": {
+    "message": "$COUNT$ opened",
+    "description": "Restore result part",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "resultPinnedOne": {
+    "message": "1 pinned",
+    "description": "Restore result part"
+  },
+  "resultPinnedCount": {
+    "message": "$COUNT$ pinned",
+    "description": "Restore result part",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "resultKeptOne": {
+    "message": "1 already open",
+    "description": "Restore result part"
+  },
+  "resultKeptCount": {
+    "message": "$COUNT$ already open",
+    "description": "Restore result part",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "resultFailedCount": {
+    "message": "$COUNT$ failed",
+    "description": "Restore result part",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  }
+}

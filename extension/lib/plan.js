@@ -1,6 +1,8 @@
 // Lógica pura de FixTab: decide qué hacer con cada pestaña guardada.
 // No toca las APIs de Chrome para poder probarla con vitest.
 
+import { plural } from "./i18n.js";
+
 /**
  * @typedef {{ url: string, finalUrl?: string, title?: string }} Entry
  * @typedef {{ id?: number, url?: string, pendingUrl?: string, pinned: boolean }} TabLike
@@ -90,16 +92,17 @@ export function entriesFromTabs(tabs) {
 }
 
 /**
- * Resumen legible del resultado de una restauración.
+ * Resumen legible del resultado de una restauración, en el idioma del navegador.
  * @param {{ opened: number, pinned: number, kept: number, failed: number }} r
+ * @param {import("./i18n.js").Translate} t
  */
-export function describeResult(r) {
-  if (r.opened + r.pinned + r.kept + r.failed === 0) return "No hay pestañas guardadas.";
-  if (r.opened === 0 && r.pinned === 0 && r.failed === 0) return "Ya estaban todas.";
+export function describeResult(r, t) {
+  if (r.opened + r.pinned + r.kept + r.failed === 0) return t("resultNone");
+  if (r.opened === 0 && r.pinned === 0 && r.failed === 0) return t("resultAllThere");
   const parts = [];
-  if (r.opened) parts.push(`${r.opened} ${r.opened === 1 ? "abierta" : "abiertas"}`);
-  if (r.pinned) parts.push(`${r.pinned} ${r.pinned === 1 ? "fijada" : "fijadas"}`);
-  if (r.kept) parts.push(`${r.kept} ya ${r.kept === 1 ? "estaba" : "estaban"}`);
-  if (r.failed) parts.push(`${r.failed} con error`);
+  if (r.opened) parts.push(plural(t, "resultOpened", r.opened));
+  if (r.pinned) parts.push(plural(t, "resultPinned", r.pinned));
+  if (r.kept) parts.push(plural(t, "resultKept", r.kept));
+  if (r.failed) parts.push(t("resultFailedCount", [r.failed]));
   return parts.join(", ") + ".";
 }

@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "FixTab",
-  "version": "0.1.1",
-  "description": "Guarda un grupo de pestañas fijadas y lo restaura con un botón o al iniciar Chrome.",
+  "name": "__MSG_extName__",
+  "default_locale": "en",
+  "version": "0.2.0",
+  "description": "__MSG_extDescription__",
   "minimum_chrome_version": "116",
   "permissions": ["tabs", "storage", "favicon"],
   "background": {
@@ -10,7 +11,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "FixTab",
+    "default_title": "__MSG_extName__",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -27,7 +28,7 @@
   "commands": {
     "restore-pinned": {
       "suggested_key": { "default": "Alt+Shift+P" },
-      "description": "Restaurar las pestañas fijadas"
+      "description": "__MSG_cmdRestore__"
     }
   }
 }
