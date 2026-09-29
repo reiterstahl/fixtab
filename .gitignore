@@ -1,0 +1,4 @@
+node_modules/
+fixtab.zip
+test-results/
+.env

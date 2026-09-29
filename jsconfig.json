@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "allowJs": true,
+    "noEmit": true,
+    "strict": true,
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["es2022", "dom", "webworker.importscripts"],
+    "types": ["chrome"],
+    "skipLibCheck": true
+  },
+  "include": ["extension/**/*.js"]
+}
