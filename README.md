@@ -43,8 +43,13 @@ FixTab remembers that set for you and puts it back where it belongs.
 - **Load when the browser starts** (on by default). It also works when the browser kept running
   in the background and you just open a new window (macOS, or Windows with background apps on).
   Turn it off and FixTab only restores when you ask.
-- **Keyboard shortcut.** <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> restores without opening the
-  popup. You can change it at `chrome://extensions/shortcuts`.
+- **Pin from FixTab.** One button pins the tab you are on and adds it to the group, so it is
+  remembered next time. A collapsible list does the same for any other open tab, and if you pinned
+  tabs by hand FixTab tells you they are not in the group yet and adds them with one click.
+- **Keyboard shortcuts and right-click menu.** <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>
+  restores and <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> pins the current tab and adds it to the
+  group, both without opening the popup. "Pin this tab and add it to FixTab" is also in the page's
+  right-click menu. Shortcuts can be changed at `chrome://extensions/shortcuts`.
 - **Follows redirects.** If `gmail.com` ends up at `mail.google.com/mail/u/0/`, FixTab remembers
   both and recognizes the tab either way.
 - **Syncs with your browser.** Your group is kept in the browser's own sync storage.
@@ -85,11 +90,12 @@ shows a red **!** and the reason on hover.
 
 ## Permissions
 
-| Permission | Why                                                                                                                      |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `tabs`     | Read the URLs and titles of your pinned tabs to save them; open, pin and move tabs to restore them.                      |
-| `storage`  | Keep your group and the startup switch (`storage.sync`), and a short-lived map of tabs being loaded (`storage.session`). |
-| `favicon`  | Show each site's icon in the popup, taken from the browser's own favicon cache.                                          |
+| Permission     | Why                                                                                                                      |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `tabs`         | Read the URLs and titles of the tabs in the current window to save or pin them; open, pin and move tabs to restore them. |
+| `storage`      | Keep your group and the startup switch (`storage.sync`), and a short-lived map of tabs being loaded (`storage.session`). |
+| `favicon`      | Show each site's icon in the popup, taken from the browser's own favicon cache.                                          |
+| `contextMenus` | Add the "Pin this tab and add it to FixTab" item to the right-click menu.                                                |
 
 No host permissions, no content scripts, no remote code.
 

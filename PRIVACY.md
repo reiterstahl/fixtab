@@ -1,6 +1,6 @@
 # FixTab privacy policy
 
-_Last updated: September 29, 2026_ · [Español abajo](#política-de-privacidad-de-fixtab)
+_Last updated: September 30, 2026_ · [Español abajo](#política-de-privacidad-de-fixtab)
 
 FixTab does not collect, sell, share or transmit any personal data. It has no servers, no
 accounts, no analytics and no tracking, and it makes no network requests of its own.
@@ -22,10 +22,12 @@ them.
 
 ## Permissions
 
-- `tabs`: read the URLs and titles of your pinned tabs so you can save them, and open, pin and
-  move tabs to restore them.
+- `tabs`: read the URLs and titles of the tabs in the current window so you can save or pin them,
+  and open, pin and move tabs to restore them.
 - `storage`: keep the data described above.
 - `favicon`: show site icons from the browser's cache.
+- `contextMenus`: add one item to the right-click menu to pin the current tab and add it to your
+  group.
 
 ## Removing your data
 
@@ -40,7 +42,7 @@ Open an issue at <https://github.com/reiterstahl/fixtab/issues>.
 
 # Política de privacidad de FixTab
 
-_Última actualización: 29 de septiembre de 2026_
+_Última actualización: 30 de septiembre de 2026_
 
 FixTab no recopila, vende, comparte ni transmite datos personales. No tiene servidores, cuentas,
 analíticas ni rastreo, y no hace peticiones de red propias.
@@ -62,10 +64,12 @@ los descarga.
 
 ## Permisos
 
-- `tabs`: leer las URLs y títulos de tus pestañas fijadas para guardarlas, y abrir, fijar y mover
-  pestañas para restaurarlas.
+- `tabs`: leer las URLs y títulos de las pestañas de la ventana actual para guardarlas o fijarlas,
+  y abrir, fijar y mover pestañas para restaurarlas.
 - `storage`: guardar los datos descritos arriba.
 - `favicon`: mostrar los íconos de los sitios desde la caché del navegador.
+- `contextMenus`: agregar una opción al menú del clic derecho para fijar la pestaña actual y
+  sumarla a tu grupo.
 
 ## Borrar tus datos
 

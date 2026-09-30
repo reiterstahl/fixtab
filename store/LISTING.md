@@ -1,6 +1,7 @@
 # Ficha de la Chrome Web Store
 
-**Publicada** (v0.2.0, aprobada el 30 de septiembre de 2026):
+**Publicada** (v0.2.0, aprobada el 30 de septiembre de 2026; la 0.3.0 agrega el permiso
+`contextMenus`, que hay que justificar al subirla):
 <https://chromewebstore.google.com/detail/fixtab/kfehbcfiobolppdoadgjohhbpoppikhf>
 
 ID de la extensión: `kfehbcfiobolppdoadgjohhbpoppikhf`
@@ -25,12 +26,12 @@ se agrega una traducción al español.
 
 ## Imágenes
 
-| Campo              | Archivo                                                  | Tamaño   |
-| ------------------ | -------------------------------------------------------- | -------- |
-| Ícono de la tienda | `extension/icons/icon128.png`                            | 128×128  |
-| Capturas (en)      | `store/en/screenshot-1.png`, `store/en/screenshot-2.png` | 1280×800 |
-| Capturas (es)      | `store/es/screenshot-1.png`, `store/es/screenshot-2.png` | 1280×800 |
-| Tile promocional   | `store/en/promo-small.png` (y `store/es/…`)              | 440×280  |
+| Campo              | Archivo                                         | Tamaño   |
+| ------------------ | ----------------------------------------------- | -------- |
+| Ícono de la tienda | `extension/icons/icon128.png`                   | 128×128  |
+| Capturas (en)      | `store/en/screenshot-1.png`, `-2.png`, `-3.png` | 1280×800 |
+| Capturas (es)      | `store/es/screenshot-1.png`, `-2.png`, `-3.png` | 1280×800 |
+| Tile promocional   | `store/en/promo-small.png` (y `store/es/…`)     | 440×280  |
 
 Todas son PNG de 24 bits sin transparencia, como pide la tienda. Se regeneran con `pnpm assets`.
 
@@ -59,6 +60,9 @@ Pin your tabs, open FixTab and press "Save this window's pinned tabs". That set 
 
 RESTORE
 Press "Restore pinned tabs" or use Alt+Shift+P. Missing tabs open pinned, loose tabs that are already open get pinned, the ones already there are left alone, and everything goes back to your saved order. Nothing is ever duplicated.
+
+PIN FROM FIXTAB
+One button pins the tab you are on and adds it to your group. You can do the same for any other open tab from the list, from the right-click menu, or with Alt+Shift+F. If you pinned tabs by hand, FixTab tells you they are not in the group yet and adds them with one click.
 
 AT STARTUP
 With "Load when the browser starts" on (the default), FixTab restores your group when the browser opens. That includes when the browser kept running in the background and you just open a new window. Turn it off to restore only when you ask.
@@ -93,6 +97,9 @@ Fija tus pestañas, abre FixTab y pulsa «Guardar las fijadas de esta ventana».
 RESTAURAR
 Pulsa «Restaurar fijadas» o usa Alt+Shift+P. Las que faltan se abren fijadas, las que ya están abiertas pero sueltas se fijan, las que ya estaban no se tocan, y todo vuelve al orden guardado. Nunca se duplica nada.
 
+FIJAR DESDE FIXTAB
+Un botón fija la pestaña en la que estás y la agrega a tu grupo. Puedes hacer lo mismo con cualquier otra pestaña abierta desde la lista, con el clic derecho o con Alt+Shift+F. Si fijaste pestañas a mano, FixTab te avisa que aún no están en el grupo y las agrega con un clic.
+
 AL INICIAR
 Con «Cargar al abrir el navegador» encendido (viene así), FixTab restaura tu grupo al abrir el navegador. Eso incluye cuando el navegador siguió corriendo en segundo plano y solo abres una ventana nueva. Apágalo para restaurar solo cuando lo pidas.
 
@@ -115,12 +122,16 @@ Disponible en inglés y español. Código abierto: https://github.com/reiterstah
 
 **Permission justifications:**
 
-- **tabs:** Needed to read the URLs and titles of the user's pinned tabs when they save their
-  group, and to open, pin and reorder tabs when restoring it. FixTab only reads tabs when the
-  user saves or restores.
+- **tabs:** Needed to read the URLs and titles of the tabs in the current window, so the user can save
+  their pinned tabs as a group or pin an open tab and add it to the group, and to open, pin and
+  reorder tabs when restoring it. Tabs are only read when the popup is open or the user triggers
+  an action.
 - **storage:** Stores the user's saved group of tabs and the "load at startup" setting in
   chrome.storage.sync, and a temporary list of tabs being loaded in chrome.storage.session.
 - **favicon:** Shows each saved site's icon in the popup using the browser's own favicon cache.
+
+- **contextMenus:** Adds a single item, "Pin this tab and add it to FixTab", to the right-click menu
+  so the user can pin the current tab and add it to their saved group without opening the popup.
 
 **Remote code:** No, I am not using remote code.
 

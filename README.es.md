@@ -45,8 +45,14 @@ FixTab recuerda ese conjunto por ti y lo pone de vuelta en su sitio.
 - **Cargar al abrir el navegador** (encendido por defecto). También funciona si el navegador
   siguió corriendo en segundo plano y solo abres una ventana nueva (macOS, o Windows con
   aplicaciones en segundo plano). Apágalo y FixTab solo restaura cuando se lo pides.
-- **Atajo de teclado.** <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> restaura sin abrir el popup. Se
-  cambia en `chrome://extensions/shortcuts`.
+- **Fijar desde FixTab.** Un botón fija la pestaña en la que estás y la agrega al grupo, así queda
+  recordada para la próxima vez. Una lista plegable hace lo mismo con cualquier otra pestaña
+  abierta, y si fijaste pestañas a mano FixTab te avisa que aún no están en el grupo y las agrega
+  con un clic.
+- **Atajos de teclado y clic derecho.** <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> restaura y
+  <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> fija la pestaña actual y la agrega al grupo, ambos
+  sin abrir el popup. «Fijar esta pestaña y agregarla a FixTab» también está en el menú del clic
+  derecho de la página. Los atajos se cambian en `chrome://extensions/shortcuts`.
 - **Sigue redirecciones.** Si `gmail.com` termina en `mail.google.com/mail/u/0/`, FixTab recuerda
   ambas y reconoce la pestaña de cualquiera de las dos formas.
 - **Se sincroniza con tu navegador.** El grupo se guarda en el almacenamiento sincronizado del
@@ -90,11 +96,12 @@ Si algo falla sin el popup abierto (al iniciar o con el atajo), el ícono de la 
 
 ## Permisos
 
-| Permiso   | Para qué                                                                                                                            |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `tabs`    | Leer las URLs y títulos de tus fijadas para guardarlas; abrir, fijar y mover pestañas para restaurarlas.                            |
-| `storage` | Guardar el grupo y el switch de inicio (`storage.sync`), y un mapa temporal de las pestañas que están cargando (`storage.session`). |
-| `favicon` | Mostrar el ícono de cada sitio en el popup, tomado de la caché de favicons del propio navegador.                                    |
+| Permiso        | Para qué                                                                                                                                  |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `tabs`         | Leer las URLs y títulos de las pestañas de la ventana actual para guardarlas o fijarlas; abrir, fijar y mover pestañas para restaurarlas. |
+| `storage`      | Guardar el grupo y el switch de inicio (`storage.sync`), y un mapa temporal de las pestañas que están cargando (`storage.session`).       |
+| `favicon`      | Mostrar el ícono de cada sitio en el popup, tomado de la caché de favicons del propio navegador.                                          |
+| `contextMenus` | Agregar «Fijar esta pestaña y agregarla a FixTab» al menú del clic derecho.                                                               |
 
 Sin permisos de host, sin content scripts, sin código remoto.
 
