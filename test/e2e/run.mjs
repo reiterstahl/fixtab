@@ -91,7 +91,8 @@ async function openPopup(
 ) {
   const page = await context.newPage();
   await page.goto(`chrome-extension://${extId}/popup.html${query}`);
-  await page.locator("#save").waitFor();
+  // Los textos se traducen al iniciar: el popup está listo cuando el botón ya tiene el suyo.
+  await page.locator("#save").filter({ hasText: /\S/ }).waitFor();
   return page;
 }
 
