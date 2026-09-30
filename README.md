@@ -9,11 +9,14 @@
 Save the tabs you always keep pinned, then bring them back with a button, a keyboard shortcut, or
 automatically when your browser starts.
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/kfehbcfiobolppdoadgjohhbpoppikhf?label=Chrome%20Web%20Store&logo=googlechrome&logoColor=white&color=fc6121)](https://chromewebstore.google.com/detail/fixtab/kfehbcfiobolppdoadgjohhbpoppikhf)
 [![CI](https://github.com/reiterstahl/fixtab/actions/workflows/ci.yml/badge.svg)](https://github.com/reiterstahl/fixtab/actions/workflows/ci.yml)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-4285F4?logo=googlechrome&logoColor=white)
 ![Runtime dependencies](https://img.shields.io/badge/runtime%20deps-0-brightgreen)
 ![Languages](https://img.shields.io/badge/i18n-English%20%7C%20Espa%C3%B1ol-fc6121)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+**[Add to Chrome — it's free](https://chromewebstore.google.com/detail/fixtab/kfehbcfiobolppdoadgjohhbpoppikhf)**
 
 **English** · [Español](README.es.md)
 
@@ -50,9 +53,11 @@ FixTab remembers that set for you and puts it back where it belongs.
 
 ## Install
 
-### Chrome Web Store
+### Chrome Web Store (recommended)
 
-Coming soon.
+**[Install FixTab from the Chrome Web Store](https://chromewebstore.google.com/detail/fixtab/kfehbcfiobolppdoadgjohhbpoppikhf)** and click **Add to Chrome**. It updates on its
+own. The same link works in Brave, Opera, Vivaldi and other Chromium browsers; Edge first asks you to allow
+extensions from other stores.
 
 ### From source (Chrome, Edge, Brave, Arc, Opera, Vivaldi…)
 
@@ -136,7 +141,9 @@ store/                   Chrome Web Store listing text and images
 1. Bump `version` in both `extension/manifest.json` and `package.json`.
 2. Tag and push: `git tag v0.2.0 && git push --tags`.
 3. GitHub Actions runs the tests, builds the zip and attaches it to a GitHub Release.
-4. Upload that zip in the Chrome Web Store developer dashboard.
+4. Upload that zip in the [Chrome Web Store developer dashboard](https://chrome.google.com/webstore/devconsole)
+   (**Package → Upload new package**) and submit it for review. Users get the update automatically once
+   it is approved.
 
 ## Built with
 

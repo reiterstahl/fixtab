@@ -1,5 +1,10 @@
 # Ficha de la Chrome Web Store
 
+**Publicada** (v0.2.0, aprobada el 30 de septiembre de 2026):
+<https://chromewebstore.google.com/detail/fixtab/kfehbcfiobolppdoadgjohhbpoppikhf>
+
+ID de la extensión: `kfehbcfiobolppdoadgjohhbpoppikhf`
+
 Todo lo que pide el panel de desarrollador, listo para copiar. La ficha principal va en inglés y
 se agrega una traducción al español.
 

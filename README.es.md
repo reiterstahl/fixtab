@@ -9,11 +9,14 @@
 Guarda las pestañas que siempre tienes fijadas y recupéralas con un botón, un atajo de teclado o
 solas al abrir el navegador.
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/kfehbcfiobolppdoadgjohhbpoppikhf?label=Chrome%20Web%20Store&logo=googlechrome&logoColor=white&color=fc6121)](https://chromewebstore.google.com/detail/fixtab/kfehbcfiobolppdoadgjohhbpoppikhf)
 [![CI](https://github.com/reiterstahl/fixtab/actions/workflows/ci.yml/badge.svg)](https://github.com/reiterstahl/fixtab/actions/workflows/ci.yml)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-4285F4?logo=googlechrome&logoColor=white)
 ![Dependencias en ejecución](https://img.shields.io/badge/dependencias-0-brightgreen)
 ![Idiomas](https://img.shields.io/badge/i18n-English%20%7C%20Espa%C3%B1ol-fc6121)
 [![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue)](LICENSE)
+
+**[Agregar a Chrome — es gratis](https://chromewebstore.google.com/detail/fixtab/kfehbcfiobolppdoadgjohhbpoppikhf)**
 
 [English](README.md) · **Español**
 
@@ -53,9 +56,11 @@ FixTab recuerda ese conjunto por ti y lo pone de vuelta en su sitio.
 
 ## Instalar
 
-### Chrome Web Store
+### Chrome Web Store (recomendado)
 
-Próximamente.
+**[Instala FixTab desde la Chrome Web Store](https://chromewebstore.google.com/detail/fixtab/kfehbcfiobolppdoadgjohhbpoppikhf)** y pulsa **Agregar a Chrome**. Se actualiza
+sola. El mismo enlace sirve en Brave, Opera, Vivaldi y otros navegadores basados en Chromium; Edge pide
+antes permitir extensiones de otras tiendas.
 
 ### Desde el código (Chrome, Edge, Brave, Arc, Opera, Vivaldi…)
 
@@ -141,7 +146,9 @@ store/                   textos e imágenes de la ficha de la Chrome Web Store
 1. Sube `version` en `extension/manifest.json` y en `package.json`.
 2. Crea y sube la etiqueta: `git tag v0.2.0 && git push --tags`.
 3. GitHub Actions corre los tests, arma el zip y lo adjunta a un Release de GitHub.
-4. Sube ese zip en el panel de desarrollador de la Chrome Web Store.
+4. Sube ese zip en el [panel de desarrollador de la Chrome Web Store](https://chrome.google.com/webstore/devconsole)
+   (**Paquete → Subir nuevo paquete**) y envíalo a revisión. Los usuarios reciben la actualización
+   sola cuando se aprueba.
 
 ## Hecho con
 
