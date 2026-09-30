@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { entriesFromTabs, entryKeys, planRestore, urlKey } from "../extension/lib/plan.js";
+import {
+  addToGroup,
+  canAdd,
+  entriesFromTabs,
+  entryKeys,
+  inGroup,
+  planRestore,
+  urlKey,
+} from "../extension/lib/plan.js";
 
 describe("urlKey", () => {
   it("ignora el #fragmento y la barra final", () => {
@@ -112,5 +120,85 @@ describe("entriesFromTabs", () => {
       { url: "https://b.com/" },
       { url: "https://c.com/", title: "C" },
     ]);
+  });
+});
+
+describe("canAdd", () => {
+  const OWN = "chrome-extension://abc/";
+  it("acepta páginas normales y rechaza las de la propia extensión o sin URL", () => {
+    expect(canAdd({ url: "https://a.com/", pinned: false }, OWN)).toBe(true);
+    expect(canAdd({ url: "", pendingUrl: "https://a.com/", pinned: false }, OWN)).toBe(true);
+    expect(canAdd({ url: "chrome-extension://abc/popup.html", pinned: false }, OWN)).toBe(false);
+    expect(canAdd({ url: "chrome-extension://otra/pagina.html", pinned: false }, OWN)).toBe(true);
+    expect(canAdd({ url: "", pinned: false }, OWN)).toBe(false);
+  });
+
+  it("no ofrece páginas vacías ni la de nueva pestaña", () => {
+    for (const url of [
+      "about:blank",
+      "chrome://newtab/",
+      "chrome://new-tab-page/",
+      "edge://newtab/",
+      "brave://newtab/",
+    ]) {
+      expect(canAdd({ url, pinned: false }, OWN), url).toBe(false);
+    }
+    expect(canAdd({ url: "chrome://settings/", pinned: false }, OWN)).toBe(true);
+    expect(canAdd({ url: "https://newtab.example.com/", pinned: false }, OWN)).toBe(true);
+  });
+});
+
+describe("inGroup", () => {
+  const group = [
+    { url: "https://a.com/" },
+    { url: "https://gmail.com/", finalUrl: "https://mail.google.com/mail/u/0/#inbox" },
+  ];
+  it("reconoce por la URL guardada, ignorando fragmento y barra final", () => {
+    expect(inGroup(group, { url: "https://a.com#x", pinned: true })).toBe(true);
+    expect(inGroup(group, { url: "https://a.com/otra", pinned: true })).toBe(false);
+  });
+  it("reconoce por la URL a la que redirigió", () => {
+    expect(inGroup(group, { url: "https://mail.google.com/mail/u/0/#label/x", pinned: true })).toBe(
+      true,
+    );
+  });
+});
+
+describe("addToGroup", () => {
+  const group = [{ url: "https://a.com/", title: "A" }];
+
+  it("agrega al final, en el orden de la barra, sin tocar el original", () => {
+    const tabs = [
+      { id: 2, index: 5, url: "https://c.com/", title: "C", pinned: false },
+      { id: 1, index: 3, url: "https://b.com/", title: "B", pinned: false },
+    ];
+    expect(addToGroup(group, tabs)).toEqual([
+      { url: "https://a.com/", title: "A" },
+      { url: "https://b.com/", title: "B" },
+      { url: "https://c.com/", title: "C" },
+    ]);
+    expect(group).toHaveLength(1);
+  });
+
+  it("no duplica las que ya están ni dos pestañas con la misma URL", () => {
+    const tabs = [
+      { id: 1, index: 0, url: "https://a.com/#algo", title: "A otra vez", pinned: true },
+      { id: 2, index: 1, url: "https://b.com/", title: "B", pinned: true },
+      { id: 3, index: 2, url: "https://b.com/", title: "B bis", pinned: true },
+    ];
+    expect(addToGroup(group, tabs)).toEqual([
+      { url: "https://a.com/", title: "A" },
+      { url: "https://b.com/", title: "B" },
+    ]);
+  });
+
+  it("recorta los títulos largos y salta las pestañas sin URL", () => {
+    const tabs = [
+      { id: 1, index: 0, url: "https://b.com/", title: "x".repeat(200), pinned: false },
+      { id: 2, index: 1, url: "", pinned: false },
+    ];
+    const next = addToGroup([], tabs);
+    expect(next).toHaveLength(1);
+    expect(next[0].title).toHaveLength(80);
   });
 });

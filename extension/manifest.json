@@ -2,10 +2,10 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "default_locale": "en",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "__MSG_extDescription__",
   "minimum_chrome_version": "116",
-  "permissions": ["tabs", "storage", "favicon"],
+  "permissions": ["tabs", "storage", "favicon", "contextMenus"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
@@ -27,8 +27,16 @@
   },
   "commands": {
     "restore-pinned": {
-      "suggested_key": { "default": "Alt+Shift+P" },
+      "suggested_key": {
+        "default": "Alt+Shift+P"
+      },
       "description": "__MSG_cmdRestore__"
+    },
+    "pin-current": {
+      "suggested_key": {
+        "default": "Alt+Shift+F"
+      },
+      "description": "__MSG_cmdPinAdd__"
     }
   }
 }

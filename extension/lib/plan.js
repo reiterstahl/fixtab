@@ -76,19 +76,80 @@ export function planRestore(entries, tabs) {
   });
 }
 
+// storage.sync admite unos 8 KB por elemento y el grupo entero es uno solo:
+// los títulos largos (notificaciones, asuntos de correo) se recortan.
+const MAX_TITLE = 80;
+
+/**
+ * @typedef {TabLike & { index: number, title?: string }} SavableTab
+ */
+
+/**
+ * @param {SavableTab} tab
+ * @returns {Entry}
+ */
+function entryFromTab(tab) {
+  const url = /** @type {string} */ (tab.url || tab.pendingUrl);
+  const title = tab.title?.trim().slice(0, MAX_TITLE);
+  return title ? { url, title } : { url };
+}
+
+// Páginas vacías: about:blank y la de «nueva pestaña» de cada navegador
+// (chrome://newtab/, chrome://new-tab-page/, edge://newtab/…).
+const EMPTY_PAGE = /^(about:|(?!https?:)[a-z-]+:\/\/(newtab|new-tab-page)(\/|$))/;
+
+/**
+ * ¿Tiene sentido ofrecer esta pestaña para fijarla y guardarla? Necesita URL,
+ * no ser una página vacía ni una de la propia extensión (su popup abierto como
+ * pestaña).
+ * @param {TabLike} tab
+ * @param {string} ownPrefix URL base de la extensión (chrome.runtime.getURL(""))
+ */
+export function canAdd(tab, ownPrefix) {
+  const url = tab.url || tab.pendingUrl;
+  return Boolean(url) && !EMPTY_PAGE.test(url ?? "") && !(url ?? "").startsWith(ownPrefix);
+}
+
+/**
+ * ¿Hay ya una entrada del grupo para esta pestaña? Compara también la URL a la
+ * que redirigió.
+ * @param {Entry[]} group
+ * @param {TabLike} tab
+ */
+export function inGroup(group, tab) {
+  const keys = tabKeys(tab);
+  return group.some((entry) => {
+    const entryK = entryKeys(entry);
+    return keys.some((k) => entryK.has(k));
+  });
+}
+
+/**
+ * Agrega pestañas al final del grupo, en su orden de la barra, saltando las
+ * que ya están. Devuelve un grupo nuevo; no modifica el original.
+ * @param {Entry[]} group
+ * @param {SavableTab[]} tabs
+ * @returns {Entry[]}
+ */
+export function addToGroup(group, tabs) {
+  const next = [...group];
+  for (const tab of [...tabs].sort((a, b) => a.index - b.index)) {
+    if (!(tab.url || tab.pendingUrl) || inGroup(next, tab)) continue;
+    next.push(entryFromTab(tab));
+  }
+  return next;
+}
+
 /**
  * Convierte las pestañas fijadas de una ventana en el grupo a guardar.
- * @param {(TabLike & { index: number, title?: string })[]} tabs
+ * @param {SavableTab[]} tabs
  * @returns {Entry[]}
  */
 export function entriesFromTabs(tabs) {
   return tabs
     .filter((t) => t.pinned && (t.url || t.pendingUrl))
     .sort((a, b) => a.index - b.index)
-    .map((t) => {
-      const url = /** @type {string} */ (t.url || t.pendingUrl);
-      return t.title ? { url, title: t.title } : { url };
-    });
+    .map(entryFromTab);
 }
 
 /**

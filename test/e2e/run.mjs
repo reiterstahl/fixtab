@@ -84,9 +84,13 @@ async function waitFor(cond, what, timeoutMs = 15_000) {
   throw new Error(`Tiempo agotado esperando: ${what}`);
 }
 
-async function openPopup(/** @type {import("playwright").BrowserContext} */ context, extId) {
+async function openPopup(
+  /** @type {import("playwright").BrowserContext} */ context,
+  extId,
+  query = "",
+) {
   const page = await context.newPage();
-  await page.goto(`chrome-extension://${extId}/popup.html`);
+  await page.goto(`chrome-extension://${extId}/popup.html${query}`);
   await page.locator("#save").waitFor();
   return page;
 }
@@ -293,7 +297,7 @@ try {
   await step("el switch se apaga desde el popup", async () => {
     const popup = await openPopup(context, extId);
     await popup.locator(".switch-row").click(); // clic en la fila, como una persona
-    await popup.getByText("Solo se cargan cuando pulsas «Restaurar».").waitFor();
+    await popup.getByText("Apagado: solo con el botón.").waitFor();
     const { autoLoad } = await inSW(sw, () => chrome.storage.sync.get("autoLoad"));
     assert.equal(autoLoad, false);
     await popup.close();
@@ -309,6 +313,99 @@ try {
     await popup.locator("#status").getByText("2 abiertas.").waitFor();
     assert.deepEqual(await pinnedUrls(sw), [U("a"), U("b")]);
     await popup.close();
+  });
+
+  // --- Fijar y agregar ---
+
+  /** Id de la pestaña abierta con esa URL. */
+  const tabIdOf = (/** @type {string} */ url) =>
+    inSW(sw, async (u) => (await chrome.tabs.query({})).find((t) => t.url === u)?.id, url);
+  const groupUrls = async () =>
+    (await inSW(sw, () => chrome.storage.sync.get("group"))).group.map((e) => e.url);
+
+  await step("fijar «esta pestaña» y otra de la lista las agrega al grupo", async () => {
+    await resetForStartup(false);
+    await inSW(
+      sw,
+      async ([a, b, c]) => {
+        await chrome.storage.sync.set({ group: [{ url: a, title: "Página a" }] });
+        await chrome.tabs.create({ url: a, pinned: true, active: false });
+        await chrome.tabs.create({ url: b, active: false });
+        await chrome.tabs.create({ url: c, active: false });
+      },
+      [U("a"), U("b"), U("c")],
+    );
+    await waitFor(async () => (await tabIdOf(U("c"))) !== undefined, "pestañas abiertas");
+
+    // El popup real actúa sobre la pestaña activa; aquí se le indica cuál.
+    const popup = await openPopup(context, extId, `?tab=${await tabIdOf(U("b"))}`);
+    const current = popup.locator("#pin-current");
+    assert.equal(await current.textContent(), "Fijar esta pestaña y agregarla al grupo");
+    await current.click();
+    await popup.locator("#status").getByText("Fijada y agregada al grupo.").waitFor();
+    assert.deepEqual(await pinnedUrls(sw), [U("a"), U("b")]);
+    assert.deepEqual(await groupUrls(), [U("a"), U("b")]);
+    assert.equal(await current.isDisabled(), true, "ya no hay nada que hacer con ella");
+    assert.equal(
+      await popup.locator("#pin-current-hint").textContent(),
+      "Esta pestaña ya está fijada y en el grupo.",
+    );
+
+    // La lista plegable: solo c (la pestaña en blanco no se ofrece).
+    assert.equal(await popup.locator("#others-title").textContent(), "Otras pestañas abiertas (1)");
+    assert.equal(await popup.locator("#others-list").isVisible(), false, "plegada por defecto");
+    await popup.locator("#others-title").click();
+    await popup.locator("#others-list li", { hasText: "Página c" }).getByRole("button").click();
+    await popup.locator("#status").getByText("Fijada y agregada al grupo.").waitFor();
+    await popup.locator("#others").waitFor({ state: "hidden" });
+    assert.deepEqual(await pinnedUrls(sw), [U("a"), U("b"), U("c")]);
+    assert.deepEqual(await groupUrls(), [U("a"), U("b"), U("c")]);
+    await popup.close();
+  });
+
+  await step("avisa de las fijadas que no están en el grupo y las agrega", async () => {
+    await inSW(
+      sw,
+      async ([d, e]) => {
+        await chrome.tabs.create({ url: d, pinned: true, active: false });
+        await chrome.tabs.create({ url: e, pinned: true, active: false });
+      },
+      [U("d"), U("e")],
+    );
+    await waitFor(async () => (await tabIdOf(U("e"))) !== undefined, "d y e cargadas");
+
+    const popup = await openPopup(context, extId);
+    assert.equal(
+      await popup.locator("#missing-text").textContent(),
+      "2 fijadas no están en el grupo.",
+    );
+    assert.equal(
+      await popup.locator("#pin-current-hint").textContent(),
+      "Esta página no se puede agregar al grupo.",
+      "el popup abierto como pestaña no se ofrece a sí mismo",
+    );
+    await popup.locator("#missing-add").click();
+    await popup.locator("#status").getByText("Agregadas 2 pestañas al grupo.").waitFor();
+    assert.deepEqual(await groupUrls(), [U("a"), U("b"), U("c"), U("d"), U("e")]);
+    assert.equal(await popup.locator("#missing").isVisible(), false);
+    await popup.close();
+  });
+
+  await step("una del grupo que está suelta solo se fija, sin duplicarla", async () => {
+    const aId = await tabIdOf(U("a"));
+    await inSW(sw, (id) => chrome.tabs.update(id, { pinned: false }), aId);
+    const popup = await openPopup(context, extId, `?tab=${aId}`);
+    assert.equal(await popup.locator("#pin-current").textContent(), "Fijar esta pestaña");
+    await popup.locator("#pin-current").click();
+    await popup.locator("#status").getByText("Fijada.", { exact: true }).waitFor();
+    assert.equal((await groupUrls()).length, 5);
+    assert.equal((await pinnedUrls(sw)).length, 5);
+    await popup.close();
+  });
+
+  await step("el menú del clic derecho queda registrado", async () => {
+    // update() falla si el elemento no existe.
+    await inSW(sw, () => chrome.contextMenus.update("pin-add", {}));
   });
 
   await step("en inglés: el navegador en inglés muestra la extensión en inglés", async () => {

@@ -2,7 +2,7 @@
 // Chrome (si el switch está encendido), desde el popup o con el atajo.
 
 import { t } from "./lib/i18n.js";
-import { describeResult, planRestore, urlKey } from "./lib/plan.js";
+import { addToGroup, canAdd, describeResult, planRestore, urlKey } from "./lib/plan.js";
 import { getSettings, setGroup } from "./lib/store.js";
 
 // Al arrancar, Chrome puede seguir reabriendo la sesión anterior ("Continuar
@@ -94,39 +94,45 @@ async function trackFinalUrl(tabId, entryUrl) {
   if (tab?.status === "complete" && tab.url) await recordFinalUrl(tabId, tab.url);
 }
 
-// Varias pestañas pueden terminar de cargar casi a la vez; cada registro lee y
-// reescribe el grupo, así que van en fila para no pisarse.
-let recordQueue = Promise.resolve();
+// Varias cosas leen y reescriben el grupo (URL final de pestañas que terminan
+// de cargar casi a la vez, fijar desde el popup, el atajo…): van en fila para
+// no pisarse.
+/** @type {Promise<unknown>} */
+let groupQueue = Promise.resolve();
 
 /**
- * @param {number} tabId
- * @param {string} finalUrl
+ * @param {(group: import("./lib/plan.js").Entry[]) => import("./lib/plan.js").Entry[] | undefined} change
+ *   devuelve el grupo nuevo, o undefined si no hay nada que guardar
  */
-function recordFinalUrl(tabId, finalUrl) {
-  recordQueue = recordQueue
-    .then(() => doRecordFinalUrl(tabId, finalUrl))
-    .catch((err) => console.warn("FixTab: URL final", err));
-  return recordQueue;
+function updateGroup(change) {
+  const run = groupQueue.then(async () => {
+    const { group } = await getSettings();
+    const next = change(group);
+    if (next) await setGroup(next);
+  });
+  groupQueue = run.catch(() => {});
+  return run;
 }
 
 /**
  * @param {number} tabId
  * @param {string} finalUrl
  */
-async function doRecordFinalUrl(tabId, finalUrl) {
+async function recordFinalUrl(tabId, finalUrl) {
   const key = `track:${tabId}`;
   const { [key]: entryUrl } = await chrome.storage.session.get(key);
   if (!entryUrl) return;
   await chrome.storage.session.remove(key);
 
-  const { group } = await getSettings();
-  const entry = group.find((e) => e.url === entryUrl);
-  if (!entry) return;
-  const next = urlKey(finalUrl) === urlKey(entry.url) ? undefined : finalUrl;
-  if (next === entry.finalUrl) return;
-  if (next) entry.finalUrl = next;
-  else delete entry.finalUrl;
-  await setGroup(group);
+  await updateGroup((group) => {
+    const entry = group.find((e) => e.url === entryUrl);
+    if (!entry) return undefined;
+    const next = urlKey(finalUrl) === urlKey(entry.url) ? undefined : finalUrl;
+    if (next === entry.finalUrl) return undefined;
+    if (next) entry.finalUrl = next;
+    else delete entry.finalUrl;
+    return group;
+  }).catch((err) => console.warn("FixTab: URL final", err));
 }
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -237,26 +243,121 @@ async function waitForTabsToSettle() {
   }
 }
 
-// --- Popup y atajo --------------------------------------------------------
+// --- Fijar y agregar al grupo ---------------------------------------------
+
+/** @typedef {{ pinned: boolean, added: number }} AddResult */
+
+const OWN_PREFIX = chrome.runtime.getURL("");
+
+/**
+ * Fija una pestaña abierta y la agrega al final del grupo. Si ya estaba fijada
+ * o ya estaba en el grupo, hace solo lo que falte.
+ * @param {number} tabId
+ * @returns {Promise<AddResult>}
+ */
+async function pinAndAdd(tabId) {
+  const tab = await chrome.tabs.get(tabId).catch(() => null);
+  if (!tab) throw new Error(t("tabGone"));
+  if (!canAdd(tab, OWN_PREFIX)) throw new Error(t("currentUnavailable"));
+
+  const pinned = !tab.pinned;
+  if (pinned) await chrome.tabs.update(tabId, { pinned: true });
+  return { pinned, added: await addTabs([tab]) };
+}
+
+/**
+ * Agrega al grupo las pestañas fijadas de una ventana que todavía no están.
+ * @param {number} windowId
+ * @returns {Promise<AddResult>}
+ */
+async function addPinned(windowId) {
+  const tabs = await chrome.tabs.query({ windowId, pinned: true });
+  return { pinned: false, added: await addTabs(tabs.filter((tab) => canAdd(tab, OWN_PREFIX))) };
+}
+
+/**
+ * @param {chrome.tabs.Tab[]} tabs
+ * @returns {Promise<number>} cuántas se agregaron
+ */
+async function addTabs(tabs) {
+  let added = 0;
+  await updateGroup((group) => {
+    const next = addToGroup(group, tabs);
+    added = next.length - group.length;
+    return added ? next : undefined;
+  });
+  return added;
+}
+
+// --- Popup, atajos y menú -------------------------------------------------
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-  if (msg?.type !== "restore") return false;
-  restore(msg.windowId).then(
-    (result) => sendResponse({ ok: true, result, text: describeResult(result, t) }),
+  /** @type {Promise<Record<string, unknown>> | undefined} */
+  let work;
+  if (msg?.type === "restore") {
+    work = restore(msg.windowId).then((result) => ({ result, text: describeResult(result, t) }));
+  } else if (msg?.type === "pinAndAdd") {
+    work = pinAndAdd(msg.tabId).then((result) => ({ result }));
+  } else if (msg?.type === "addPinned") {
+    work = addPinned(msg.windowId).then((result) => ({ result }));
+  }
+  if (!work) return false;
+  work.then(
+    (payload) => sendResponse({ ok: true, ...payload }),
     (err) => sendResponse({ ok: false, error: errorText(err) }),
   );
   return true; // respuesta asíncrona
 });
 
 chrome.commands.onCommand.addListener(async (command, tab) => {
-  if (command !== "restore-pinned") return;
   try {
-    const windowId =
-      tab?.windowId ?? (await chrome.windows.getLastFocused({ windowTypes: ["normal"] })).id;
-    if (windowId !== undefined) await restore(windowId);
+    if (command === "restore-pinned") {
+      const windowId =
+        tab?.windowId ?? (await chrome.windows.getLastFocused({ windowTypes: ["normal"] })).id;
+      if (windowId !== undefined) await restore(windowId);
+    } else if (command === "pin-current") {
+      await pinActiveTab(tab);
+    }
   } catch (err) {
     console.error("FixTab: atajo", err);
   }
+});
+
+/**
+ * Sin popup abierto no hay dónde mostrar un error: va al aviso del icono.
+ * @param {chrome.tabs.Tab} [tab]
+ */
+async function pinActiveTab(tab) {
+  const target = tab ?? (await chrome.tabs.query({ active: true, lastFocusedWindow: true }))[0];
+  if (target?.id === undefined) return;
+  try {
+    await pinAndAdd(target.id);
+    await showBadge(null);
+  } catch (err) {
+    await showBadge(errorText(err));
+  }
+}
+
+// El menú se registra al instalar o actualizar, y de nuevo al arrancar por si
+// cambió el idioma del navegador.
+const MENU_ID = "pin-add";
+
+function registerMenu() {
+  chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create(
+      { id: MENU_ID, title: t("menuPinAdd"), contexts: ["page", "action"] },
+      // Si onInstalled y onStartup coinciden, el segundo create choca con el id
+      // ya creado; leer lastError evita el aviso de error sin atender.
+      () => void chrome.runtime.lastError,
+    );
+  });
+}
+
+chrome.runtime.onInstalled.addListener(registerMenu);
+chrome.runtime.onStartup.addListener(registerMenu);
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === MENU_ID) void pinActiveTab(tab);
 });
 
 // --- Aviso en el icono ----------------------------------------------------

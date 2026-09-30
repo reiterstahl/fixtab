@@ -1,6 +1,6 @@
 {
   "name": "fixtab",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "Extensión de Chrome: guarda un grupo de pestañas fijadas y lo restaura con un botón o al iniciar.",

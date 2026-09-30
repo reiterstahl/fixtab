@@ -17,6 +17,11 @@
       <p id="status" class="status" role="status" hidden></p>
     </section>
 
+    <section>
+      <button id="pin-current" type="button"></button>
+      <p id="pin-current-hint" class="hint one-line"></p>
+    </section>
+
     <label class="switch-row">
       <span>
         <span class="switch-title" data-i18n="autoloadTitle"></span>
@@ -28,9 +33,18 @@
 
     <section>
       <h2 id="group-title"></h2>
+      <p id="missing" class="notice" hidden>
+        <span id="missing-text"></span>
+        <button id="missing-add" class="small" type="button" data-i18n="notInGroupAdd"></button>
+      </p>
       <ol id="group" class="group"></ol>
       <p id="empty" class="hint" data-i18n="groupEmpty" hidden></p>
     </section>
+
+    <details id="others" hidden>
+      <summary id="others-title"></summary>
+      <ol id="others-list" class="group"></ol>
+    </details>
 
     <footer>
       <button id="save" type="button"></button>

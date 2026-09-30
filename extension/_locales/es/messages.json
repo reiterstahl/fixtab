@@ -33,11 +33,11 @@
     "description": "Switch label"
   },
   "autoloadOn": {
-    "message": "Se cargan solas al abrir el navegador.",
+    "message": "Encendido: se abren solas.",
     "description": "Switch on"
   },
   "autoloadOff": {
-    "message": "Solo se cargan cuando pulsas «Restaurar».",
+    "message": "Apagado: solo con el botón.",
     "description": "Switch off"
   },
   "groupTitle": {
@@ -54,7 +54,7 @@
     }
   },
   "groupEmpty": {
-    "message": "Todavía no hay grupo. Fija las pestañas que quieras y pulsa «Guardar».",
+    "message": "Todavía no hay grupo. Fija una pestaña desde aquí, o fija las que quieras y pulsa «Guardar».",
     "description": "Empty state"
   },
   "saveButton": {
@@ -77,10 +77,6 @@
   "saveHintNoPinned": {
     "message": "Esta ventana no tiene pestañas fijadas.",
     "description": "Why Save is disabled"
-  },
-  "saveHintReplaces": {
-    "message": "Reemplaza el grupo guardado.",
-    "description": "Save hint"
   },
   "saveConfirm": {
     "message": "Confirmar: reemplazar el grupo",
@@ -111,17 +107,8 @@
       }
     }
   },
-  "shortcut": {
-    "message": "Atajo: $KEYS$",
-    "description": "Assigned keyboard shortcut",
-    "placeholders": {
-      "keys": {
-        "content": "$1"
-      }
-    }
-  },
   "noShortcut": {
-    "message": "Sin atajo de teclado. Se asigna en chrome://extensions/shortcuts.",
+    "message": "Sin atajos de teclado. Se asignan en chrome://extensions/shortcuts.",
     "description": "No shortcut assigned"
   },
   "removeTitle": {
@@ -215,6 +202,116 @@
     "description": "Restore result part",
     "placeholders": {
       "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "cmdPinAdd": {
+    "message": "Fijar esta pestaña y agregarla al grupo de FixTab",
+    "description": "Keyboard shortcut description"
+  },
+  "menuPinAdd": {
+    "message": "Fijar esta pestaña y agregarla a FixTab",
+    "description": "Right-click menu item"
+  },
+  "pinCurrent": {
+    "message": "Fijar esta pestaña y agregarla al grupo",
+    "description": "Button: current tab is loose and not in the group"
+  },
+  "pinCurrentOnly": {
+    "message": "Fijar esta pestaña",
+    "description": "Button: current tab is in the group but not pinned"
+  },
+  "addCurrent": {
+    "message": "Agregar esta pestaña al grupo",
+    "description": "Button: current tab is pinned but not in the group"
+  },
+  "currentDone": {
+    "message": "Esta pestaña ya está fijada y en el grupo.",
+    "description": "Why the current-tab button is disabled"
+  },
+  "currentUnavailable": {
+    "message": "Esta página no se puede agregar al grupo.",
+    "description": "Why the current-tab button is disabled"
+  },
+  "tabGone": {
+    "message": "Esa pestaña ya no está abierta.",
+    "description": "Error"
+  },
+  "notInGroupOne": {
+    "message": "1 fijada no está en el grupo.",
+    "description": "Notice"
+  },
+  "notInGroupCount": {
+    "message": "$COUNT$ fijadas no están en el grupo.",
+    "description": "Notice",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "notInGroupAdd": {
+    "message": "Agregar",
+    "description": "Button next to the notice"
+  },
+  "othersTitle": {
+    "message": "Otras pestañas abiertas ($COUNT$)",
+    "description": "Collapsible section title",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "pinButton": {
+    "message": "Fijar",
+    "description": "Button on each open tab"
+  },
+  "pinLabel": {
+    "message": "Fijar $TITLE$ y agregarla al grupo",
+    "description": "Accessible label of the Pin button",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "pinnedAdded": {
+    "message": "Fijada y agregada al grupo.",
+    "description": "Result"
+  },
+  "pinnedOnly": {
+    "message": "Fijada.",
+    "description": "Result: it was already in the group"
+  },
+  "addedOne": {
+    "message": "Agregada 1 pestaña al grupo.",
+    "description": "Result"
+  },
+  "addedCount": {
+    "message": "Agregadas $COUNT$ pestañas al grupo.",
+    "description": "Result",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "shortcutRestore": {
+    "message": "$KEYS$ restaurar",
+    "description": "Assigned shortcut",
+    "placeholders": {
+      "keys": {
+        "content": "$1"
+      }
+    }
+  },
+  "shortcutPin": {
+    "message": "$KEYS$ fijar",
+    "description": "Assigned shortcut",
+    "placeholders": {
+      "keys": {
         "content": "$1"
       }
     }

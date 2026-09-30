@@ -2,3 +2,4 @@ node_modules/
 dist/
 test-results/
 .env
+__pycache__/
